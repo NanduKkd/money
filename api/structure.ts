@@ -9,22 +9,10 @@ router.get('/', async(req, res) => {
 	if(!req.user)
 		return res.status(401).end();
 	try {
-		const categories = await CategoryModel.find({person: req.user._id}).exec()
-		const rollpeople = await RollpersonModel.find({person: req.user._id}).exec()
-		const accounts = await AccountModel.find({person: req.user._id}).exec()
-		res.status(200).json({categories, rollpeople, accounts})
-	} catch (e) {
-		res.status(500).end()
-		console.error(e)
-	}
-})
-
-router.get('/category', async(req, res) => {
-	if(!req.user)
-		return res.status(401).end();
-	try {
-		const categories = await CategoryModel.find({person: req.user._id}).exec()
-		res.status(200).json(categories)
+		const category = await CategoryModel.find({person: req.user._id}).exec()
+		const rollperson = await RollpersonModel.find({person: req.user._id}).exec()
+		const account = await AccountModel.find({person: req.user._id}).exec()
+		res.status(200).json({category, rollperson, account})
 	} catch (e) {
 		res.status(500).end()
 		console.error(e)
@@ -36,19 +24,7 @@ router.post('/category', async(req, res) => {
 	try {
 		const category = new CategoryModel({person: req.user._id, name: req.body.name})
 		await category.save();
-		res.status(201).end()
-	} catch (e) {
-		res.status(500).end()
-		console.error(e)
-	}
-})
-
-router.get('/rollperson', async(req, res) => {
-	if(!req.user)
-		return res.status(401).end();
-	try {
-		const rollpeople = await RollpersonModel.find({person: req.user._id}).exec()
-		res.status(200).json(rollpeople)
+		res.status(201).json(category)
 	} catch (e) {
 		res.status(500).end()
 		console.error(e)
@@ -60,19 +36,7 @@ router.post('/rollperson', async(req, res) => {
 	try {
 		const rollperson = new RollpersonModel({person: req.user._id, name: req.body.name})
 		await rollperson.save();
-		res.status(201).end()
-	} catch (e) {
-		res.status(500).end()
-		console.error(e)
-	}
-})
-
-router.get('/account', async(req, res) => {
-	if(!req.user)
-		return res.status(401).end();
-	try {
-		const accounts = await AccountModel.find({person: req.user}).exec()
-		res.status(200).json(accounts)
+		res.status(201).json(rollperson)
 	} catch (e) {
 		res.status(500).end()
 		console.error(e)
@@ -84,7 +48,7 @@ router.post('/account', async(req, res) => {
 	try {
 		const account = new AccountModel({person: req.user._id, name: req.body.name})
 		await account.save();
-		res.status(201).end()
+		res.status(201).json(account)
 	} catch (e) {
 		res.status(500).end()
 		console.error(e)

@@ -21,22 +21,10 @@ router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.user)
         return res.status(401).end();
     try {
-        const categories = yield category_1.default.find({ person: req.user._id }).exec();
-        const rollpeople = yield rollperson_1.default.find({ person: req.user._id }).exec();
-        const accounts = yield account_1.default.find({ person: req.user._id }).exec();
-        res.status(200).json({ categories, rollpeople, accounts });
-    }
-    catch (e) {
-        res.status(500).end();
-        console.error(e);
-    }
-}));
-router.get('/category', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!req.user)
-        return res.status(401).end();
-    try {
-        const categories = yield category_1.default.find({ person: req.user._id }).exec();
-        res.status(200).json(categories);
+        const category = yield category_1.default.find({ person: req.user._id }).exec();
+        const rollperson = yield rollperson_1.default.find({ person: req.user._id }).exec();
+        const account = yield account_1.default.find({ person: req.user._id }).exec();
+        res.status(200).json({ category, rollperson, account });
     }
     catch (e) {
         res.status(500).end();
@@ -51,19 +39,7 @@ router.post('/category', (req, res) => __awaiter(void 0, void 0, void 0, functio
     try {
         const category = new category_1.default({ person: req.user._id, name: req.body.name });
         yield category.save();
-        res.status(201).end();
-    }
-    catch (e) {
-        res.status(500).end();
-        console.error(e);
-    }
-}));
-router.get('/rollperson', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!req.user)
-        return res.status(401).end();
-    try {
-        const rollpeople = yield rollperson_1.default.find({ person: req.user._id }).exec();
-        res.status(200).json(rollpeople);
+        res.status(201).json(category);
     }
     catch (e) {
         res.status(500).end();
@@ -78,19 +54,7 @@ router.post('/rollperson', (req, res) => __awaiter(void 0, void 0, void 0, funct
     try {
         const rollperson = new rollperson_1.default({ person: req.user._id, name: req.body.name });
         yield rollperson.save();
-        res.status(201).end();
-    }
-    catch (e) {
-        res.status(500).end();
-        console.error(e);
-    }
-}));
-router.get('/account', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!req.user)
-        return res.status(401).end();
-    try {
-        const accounts = yield account_1.default.find({ person: req.user }).exec();
-        res.status(200).json(accounts);
+        res.status(201).json(rollperson);
     }
     catch (e) {
         res.status(500).end();
@@ -105,7 +69,7 @@ router.post('/account', (req, res) => __awaiter(void 0, void 0, void 0, function
     try {
         const account = new account_1.default({ person: req.user._id, name: req.body.name });
         yield account.save();
-        res.status(201).end();
+        res.status(201).json(account);
     }
     catch (e) {
         res.status(500).end();
