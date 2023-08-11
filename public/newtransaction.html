@@ -4,6 +4,36 @@
 		<script>
 	document.addEventListener('DOMContentLoaded', () => {
 		let form = document.forms[0];
+		fetch('/api/transactions/').then(res => {
+			if(res.status===200)
+				return res.json();
+			else
+				throw new Error("Got response with status "+res.status)
+		}).then(res => {
+			const ul = document.getElementById('transactions');
+			for(let i of res) {
+				const li = ul.appendChild(document.createElement('li'));
+				li.append(i._id);
+				// li.innerHTML = JSON.stringify(i)
+				const liul = li.appendChild(document.createElement('ul'));
+				// const bold = liul.appendChild(document.createElement('b'))
+				// bold.innerText = i._id;
+				for(let j of i.data) {
+					const liulli = liul.appendChild(document.createElement('li'));
+					liulli.innerText = new Date(j.date).toLocaleTimeString()+': '+j.amount +'₹'
+					if(j.type==='self') {
+						liulli.innerText += ', '+ j.fromaccount +' -> '+ j.toaccount
+					} else if(j.type==='roll') {
+						liulli.innerText += ' Rolled, ('+j.rollperson+' using '+j.account+')'
+					} else if(j.type==='transaction') {
+						liulli.innerText += ', ('+j.category+' using '+j.account+')'
+					}
+				}
+			}
+		}).catch(e => {
+			console.error(e)
+			alert('error')
+		})
 		fetch('/api/structure/').then(res => {
 			if(res.status===200)
 				return res.json()
@@ -47,52 +77,98 @@
 		}
 	})
 		</script>
+		<style>
+			body {
+				overflow: hidden;
+				height: 100vh;
+				padding: 0; margin: 0;
+				display: flex;
+				border-bottom: solid 3px #f00;
+			}
+			body > div {
+				flex: 1;
+				overflow-y: auto;
+				height: 100%;
+				border-right: solid 1px black;
+			}
+			form {
+				padding: 1em;
+				display: flex;
+				flex-direction: column;
+			}
+			form label {
+				margin-top: 0.3em;
+				font-size: 1.5em;
+			}
+			form input, form select, form button {
+				font-size: 1.4em;
+				padding: 0.2em;
+			}
+			#transactions {
+				font-size: 1.5em;
+			}
+			#transactions > li {
+				font-weight: bold;
+			}
+			#transactions > li > ul {
+				margin: 0.5em 0;
+			}
+			#transactions > li > ul > li {
+				font-weight: normal;
+				color: #444;
+			}
+		</style>
 	</head>
 	<body>
-		<form method="post" action="/api/transactions">
-			<label for="type">Type:</label>
-			<select name="type" id="type" required>
-				<option value="">Select a Type</option>
-				<option value="transaction">Transaction</option>
-				<option value="roll">Rolling</option>
-				<option value="self">Self Transfer</option>
-			</select>
-			<br>
-			<label for="amount">Amount:</label>
-			<input step="0.01" name="amount" required id="amount" type="number" placeholder="Enter amount">
-			<br>
-			<label for="comment">Comment:</label>
-			<input name="comment" required id="comment">
-			<br>
-			<label for="category">Category:</label>
-			<select id="category" name="category" disabled>
-				<option value="">Select a Category</option>
-			</select>
-			<br>
-			<label for="rollperson">Roll Person:</label>
-			<select name="rollperson" id="rollperson" disabled>
-				<option value="">Select a Person</option>
-			</select>
-			<br>
-			<label for="account">Account:</label>
-			<select name="account" id="account" disabled>
-				<option value="">Select a account</option>
-			</select>
-			<br>
-			<label for="fromaccount">From Account:</label>
-			<select name="fromaccount" id="fromaccount" disabled>
-				<option value="">Select a from account</option>
-			</select>
-			<br>
-			<label for="toaccount">To Account:</label>
-			<select name="toaccount" id="toaccount" disabled>
-				<option value="">Select a to account</option>
-			</select>
-			<br>
-			<label for="date">Date and Time:</label>
-			<input required type="datetime-local" id="date" name="date">
-			<br>
-			<button>Save Transaction</button>
-		</form>
+		<div>
+			<ul id="transactions"></ul>
+		</div>
+		<div>
+			<form method="post" action="/api/transactions">
+				<label for="type">Type:</label>
+				<select name="type" id="type" required>
+					<option value="">Select a Type</option>
+					<option value="transaction">Transaction</option>
+					<option value="roll">Rolling</option>
+					<option value="self">Self Transfer</option>
+				</select>
+				<!--br-->
+				<label for="amount">Amount:</label>
+				<input step="0.01" name="amount" required id="amount" type="number" placeholder="Enter amount">
+				<!--br-->
+				<label for="comment">Comment:</label>
+				<input name="comment" required id="comment">
+				<!--br-->
+				<label for="category">Category:</label>
+				<select id="category" name="category" disabled>
+					<option value="">Select a Category</option>
+				</select>
+				<!--br-->
+				<label for="rollperson">Roll Person:</label>
+				<select name="rollperson" id="rollperson" disabled>
+					<option value="">Select a Person</option>
+				</select>
+				<!--br-->
+				<label for="account">Account:</label>
+				<select name="account" id="account" disabled>
+					<option value="">Select a account</option>
+				</select>
+				<!--br-->
+				<label for="fromaccount">From Account:</label>
+				<select name="fromaccount" id="fromaccount" disabled>
+					<option value="">Select a from account</option>
+				</select>
+				<!--br-->
+				<label for="toaccount">To Account:</label>
+				<select name="toaccount" id="toaccount" disabled>
+					<option value="">Select a to account</option>
+				</select>
+				<!--br-->
+				<label for="date">Date and Time:</label>
+				<input required type="datetime-local" id="date" name="date">
+				<!--br-->
+				<button>Save Transaction</button>
+			</form>
+		</div>
 	</body>
 </html>

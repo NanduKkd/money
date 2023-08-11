@@ -17,7 +17,7 @@ mongoose.connection.on('error', e => {
 const app = express();
 
 app.use(json())
-app.use(urlencoded())
+app.use(urlencoded({extended: false}))
 
 app.get('/', (req, res) => {
 	res.end('Hello World! My name is Nandu!')
