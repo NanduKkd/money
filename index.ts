@@ -1,4 +1,4 @@
-import express, { json } from 'express'
+import express, { json, urlencoded } from 'express'
 import api from './api'
 import mongoose from 'mongoose'
 
@@ -17,11 +17,13 @@ mongoose.connection.on('error', e => {
 const app = express();
 
 app.use(json())
+app.use(urlencoded())
 
 app.get('/', (req, res) => {
 	res.end('Hello World! My name is Nandu!')
 })
 app.use('/api', api)
+app.use(express.static('public'))
 
 app.listen(3001, () => {
 	console.log('app listening on port 3001')

@@ -73,7 +73,10 @@ router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             throw new Error();
         const newTrans = new transaction_1.default(Object.assign(Object.assign({}, req.body), { person: req.user._id }));
         yield newTrans.save();
-        res.status(200).end();
+        if (req.header('content-type'), 'application/x-www-form-urlencoded')
+            res.redirect('/newtransaction.html');
+        else
+            res.status(200).end();
     }
     catch (e) {
         res.status(500).end();

@@ -58,7 +58,10 @@ router.post('/', async(req, res) => {
 		if(!req.user) throw new Error();
 		const newTrans = new TransactionModel({...req.body, person: req.user._id});
 		await newTrans.save();
-		res.status(200).end()
+		if(req.header('content-type'), 'application/x-www-form-urlencoded')
+			res.redirect('/newtransaction.html')
+		else
+			res.status(200).end()
 	} catch (e) {
 		res.status(500).end();
 		console.error(e);

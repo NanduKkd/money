@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script>
+	document.addEventListener('DOMContentLoaded', () => {
+		let form = document.forms[0];
+		fetch('/api/structure/').then(res => {
+			if(res.status===200)
+				return res.json()
+			else
+				throw new Error('Got response with status '+res.status)
+		}).then(res => {
+			for(let i of res.category) {
+				const cat = form.category.appendChild(document.createElement('option'))
+				cat.value = i._id
+				cat.innerText = i.name
+			}
+			for(let i of res.rollperson) {
+				const rp = form.rollperson.appendChild(document.createElement('option'))
+				rp.value = i._id
+				rp.innerText = i.name
+			}
+			for(let i of res.account) {
+				const ac = form.account.appendChild(document.createElement('option'))
+				ac.value = i._id
+				ac.innerText = i.name
+				const acf = form.fromaccount.appendChild(document.createElement('option'))
+				acf.value = i._id
+				acf.innerText = i.name
+				const act = form.toaccount.appendChild(document.createElement('option'))
+				act.value = i._id
+				act.innerText = i.name
+			}
+		})
+		form.type.onchange = (e) => {
+			const val = form.type.value;
+			form.category.disabled = val!=='transaction'
+			form.category.required = val==='transaction'
+			form.rollperson.disabled = val!=='roll'
+			form.rollperson.required = val==='roll'
+			form.account.disabled = val!=='roll' && val!=='transaction'
+			form.account.required = val==='roll' || val==='transaction'
+			form.fromaccount.disabled = val!=='self'
+			form.fromaccount.required = val==='self'
+			form.toaccount.disabled = val!=='self'
+			form.toaccount.required = val==='self'
+		}
+	})
+		</script>
+	</head>
+	<body>
+		<form method="post" action="/api/transactions">
+			<label for="type">Type:</label>
+			<select name="type" id="type" required>
+				<option value="">Select a Type</option>
+				<option value="transaction">Transaction</option>
+				<option value="roll">Rolling</option>
+				<option value="self">Self Transfer</option>
+			</select>
+			<br>
+			<label for="amount">Amount:</label>
+			<input name="amount" required id="amount" type="number" placeholder="Enter amount">
+			<br>
+			<label for="comment">Comment:</label>
+			<input name="comment" id="comment">
+			<br>
+			<label for="category">Category:</label>
+			<select id="category" name="category" disabled>
+				<option value="">Select a Category</option>
+			</select>
+			<br>
+			<label for="rollperson">Roll Person:</label>
+			<select name="rollperson" id="rollperson" disabled>
+				<option value="">Select a Person</option>
+			</select>
+			<br>
+			<label for="account">Account:</label>
+			<select name="account" id="account" disabled>
+				<option value="">Select a account</option>
+			</select>
+			<br>
+			<label for="fromaccount">From Account:</label>
+			<select name="fromaccount" id="fromaccount" disabled>
+				<option value="">Select a from account</option>
+			</select>
+			<br>
+			<label for="toaccount">To Account:</label>
+			<select name="toaccount" id="toaccount" disabled>
+				<option value="">Select a to account</option>
+			</select>
+			<br>
+			<label for="date">Date and Time:</label>
+			<input required type="datetime-local" id="date" name="date">
+			<br>
+			<button>Save Transaction</button>
+		</form>
+	</body>
+</html>

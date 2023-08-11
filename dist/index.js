@@ -41,10 +41,12 @@ mongoose_1.default.connection.on('error', e => {
 });
 const app = (0, express_1.default)();
 app.use((0, express_1.json)());
+app.use((0, express_1.urlencoded)());
 app.get('/', (req, res) => {
     res.end('Hello World! My name is Nandu!');
 });
 app.use('/api', api_1.default);
+app.use(express_1.default.static('public'));
 app.listen(3001, () => {
     console.log('app listening on port 3001');
 });
