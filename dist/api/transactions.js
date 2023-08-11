@@ -43,6 +43,7 @@ router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 } },
             { $group: {
                     _id: { $dateToString: { format: '%Y-%m-%d', date: '$date' } },
+                    date: { $first: '$date' },
                     total: { $sum: '$amount' },
                     data: { $push: {
                             account: '$account',
@@ -57,6 +58,7 @@ router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                             comment: '$comment',
                         } }
                 } },
+            { $sort: { date: -1 } },
         ]).exec();
         res.status(200).json(transactions);
     }

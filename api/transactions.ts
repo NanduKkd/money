@@ -30,6 +30,7 @@ router.get('/', async(req, res) => {
 			}},
 			{$group: {
 				_id: {$dateToString: {format: '%Y-%m-%d', date: '$date'}},
+				date: {$first: '$date'},
 				total: {$sum: '$amount'},
 				data: {$push: {
 					account: '$account',
@@ -44,6 +45,7 @@ router.get('/', async(req, res) => {
 					comment: '$comment',
 				}}
 			}},
+			{$sort: {date: -1}},
 		]).exec();
 		res.status(200).json(transactions);
 	} catch (e) {
